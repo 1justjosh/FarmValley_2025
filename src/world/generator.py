@@ -9,7 +9,8 @@ class Generator:
     def __init__(self):
         self.win = pg.display.get_surface()
 
-        self.visible_sprites = Camera()
+        self.visible_sprites = Camera(self)
+        self.collide_rects = {}
 
         self.assets = self.load_assets()
 
@@ -68,7 +69,8 @@ class Generator:
         }
 
     def load_all(self):
-        self.load_layer("floor","floor")
+        self.load_layer("floor")
+        self.load_layer("world-end")
         self.load_objects("entities","player")
 
     def load_objects(self,layer_name,name):
@@ -76,15 +78,19 @@ class Generator:
             x = int(obj.x // self.map.tilewidth) * TILE_SIZE
             y = int(obj.y // self.map.tileheight) * TILE_SIZE
             if obj.name == "Player":
-                self.player = Player((x, y), self.assets["player"], self.visible_sprites)
+                self.player = Player((x, y), self.assets["player"], self.visible_sprites,self)
 
-    def load_layer(self,name,z):
+    def load_layer(self,name):
         for x,y,img in self.map.get_layer_by_name(name).tiles():
             x = x * TILE_SIZE
             y = y * TILE_SIZE
             img = pg.transform.scale(img,(TILE_SIZE,TILE_SIZE))
 
-            Tile((x,y),img,self.visible_sprites,z)
+            if name in COLLIDE_LAYERS:
+                self.collide_rects[f"{x};{y}"] = pg.Rect(x,y,TILE_SIZE,TILE_SIZE)
+
+            else:
+                Tile((x,y),img,self.visible_sprites,name)
 
     def event_handler(self, event):
         pass

@@ -6,3 +6,5 @@ class Tile(pg.sprite.Sprite):
         self.z = z
         self.image = img
         self.rect = self.image.get_rect(topleft=pos)
+        self.hitbox = self.rect.copy()
+        self.old_rect = self.hitbox

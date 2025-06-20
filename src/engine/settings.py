@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame.math import Vector2 as vec2
 import os
 
 VERSION_MAJOR = 0
@@ -18,4 +19,8 @@ WORLD_PATH = os.path.join("assets", "world", "maps")
 LAYERS = [
     "floor",
     "entities"
+]
+
+COLLIDE_LAYERS = [
+    "world-end"
 ]
