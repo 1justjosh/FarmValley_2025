@@ -5,12 +5,18 @@ from src.entities.player import Player
 from src.tiles.tiles import Tile
 from pytmx.util_pygame import load_pygame
 
+from collections import defaultdict
+
 class Generator:
     def __init__(self):
         self.win = pg.display.get_surface()
 
+        self.chunk_size = TILE_SIZE
+        self.chunk_tiles = defaultdict(list)
+
         self.visible_sprites = Camera(self)
         self.collide_rects = {}
+
 
         self.assets = self.load_assets()
 
@@ -90,7 +96,23 @@ class Generator:
                 self.collide_rects[f"{x};{y}"] = pg.Rect(x,y,TILE_SIZE,TILE_SIZE)
 
             else:
-                Tile((x,y),img,self.visible_sprites,name)
+                Tile((x,y),img,[],name)
+
+    def get_chunk_key(self, x, y):
+        return f"{x // self.chunk_size};{y // self.chunk_size}"
+
+    def load_layer(self, name):
+        for x, y, img in self.map.get_layer_by_name(name).tiles():
+            world_x = x * TILE_SIZE
+            world_y = y * TILE_SIZE
+            img = pg.transform.scale(img, (TILE_SIZE, TILE_SIZE))
+
+            if name in COLLIDE_LAYERS:
+                self.collide_rects[f"{world_x};{world_y}"] = pg.Rect(world_x, world_y, TILE_SIZE, TILE_SIZE)
+            else:
+                tile = Tile((world_x, world_y), img, [], name)  # No sprite group
+                chunk_key = self.get_chunk_key(world_x, world_y)
+                self.chunk_tiles[chunk_key].append(tile)
 
     def event_handler(self, event):
         pass
