@@ -12,7 +12,8 @@ class Generator:
         self.win = pg.display.get_surface()
 
         self.chunk_size = TILE_SIZE
-        self.chunk_tiles = defaultdict(list)
+        self.chunk_tiles = defaultdict(lambda: defaultdict(list))  # {chunk_key: {z: [tiles]}}
+
 
         self.visible_sprites = Camera(self)
         self.collide_rects = {}
@@ -75,7 +76,8 @@ class Generator:
         }
 
     def load_all(self):
-        self.load_layer("floor")
+        self.load_layer("plantable","floor")
+        self.load_layer("water")
         self.load_layer("world-end")
         self.load_objects("entities","player")
 
@@ -86,22 +88,10 @@ class Generator:
             if obj.name == "Player":
                 self.player = Player((x, y), self.assets["player"], self.visible_sprites,self)
 
-    def load_layer(self,name):
-        for x,y,img in self.map.get_layer_by_name(name).tiles():
-            x = x * TILE_SIZE
-            y = y * TILE_SIZE
-            img = pg.transform.scale(img,(TILE_SIZE,TILE_SIZE))
-
-            if name in COLLIDE_LAYERS:
-                self.collide_rects[f"{x};{y}"] = pg.Rect(x,y,TILE_SIZE,TILE_SIZE)
-
-            else:
-                Tile((x,y),img,[],name)
-
     def get_chunk_key(self, x, y):
         return f"{x // self.chunk_size};{y // self.chunk_size}"
 
-    def load_layer(self, name):
+    def load_layer(self, name ,z=None, animated_frames:list=None):
         for x, y, img in self.map.get_layer_by_name(name).tiles():
             world_x = x * TILE_SIZE
             world_y = y * TILE_SIZE
@@ -110,9 +100,15 @@ class Generator:
             if name in COLLIDE_LAYERS:
                 self.collide_rects[f"{world_x};{world_y}"] = pg.Rect(world_x, world_y, TILE_SIZE, TILE_SIZE)
             else:
-                tile = Tile((world_x, world_y), img, [], name)  # No sprite group
+                z_value = name if z is None else z
+
+                if animated_frames:
+                    pass
+                else:
+                    tile = Tile((world_x, world_y), img, [], z_value)
+
                 chunk_key = self.get_chunk_key(world_x, world_y)
-                self.chunk_tiles[chunk_key].append(tile)
+                self.chunk_tiles[chunk_key][z_value].append(tile)
 
     def event_handler(self, event):
         pass

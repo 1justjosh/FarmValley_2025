@@ -27,8 +27,8 @@ class Window:
         pg.display.flip()
 
     def update(self):
-        dt = self.clock.tick(0) / 1000
-        pg.display.set_caption(f"{TITLE} | FPS: [{self.clock.get_fps() :.0f}] | DT: {dt}")
+        dt = self.clock.tick(120) / 1000
+        pg.display.set_caption(f"{TITLE} | FPS: [{self.clock.get_fps() :.0f}] | DT: [{dt}]")
 
         self.scene.update(dt)
 

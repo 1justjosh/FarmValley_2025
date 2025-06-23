@@ -28,11 +28,13 @@ class Camera(pg.sprite.Group):
 
         # Render chunked tiles
         rendered = 0
-        for chunk_key in visible_chunks:
-            for tile in self.generator.chunk_tiles.get(chunk_key, []):
-                offset_rect = tile.rect.copy()
-                offset_rect.center -= self.offset
-                self.win.blit(tile.image, offset_rect)
+        for layer in LAYERS:
+            for chunk_key in visible_chunks:
+                for tile in self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []):
+                    offset_rect = tile.rect.copy()
+                    offset_rect.topleft -= self.offset
+                    self.win.blit(tile.image, offset_rect)
+
                 rendered += 1
 
         print(f"Tiles rendered this frame: {rendered}")
