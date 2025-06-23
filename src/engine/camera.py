@@ -9,6 +9,12 @@ class Camera(pg.sprite.Group):
         self.offset = pg.math.Vector2()
         self.chunk_size = generator.chunk_size
 
+        self.rendered_chunks = None
+        self.rendered_tiles = 0
+
+    def get_rendered_chunks(self):
+        self.rendered_chunks = self.get_visible_chunks()
+
     def get_visible_chunks(self):
         buffer = self.chunk_size
         view_rect = pg.Rect(self.offset.x, self.offset.y, WIDTH, HEIGHT).inflate(buffer, buffer)
@@ -24,20 +30,16 @@ class Camera(pg.sprite.Group):
         self.offset.x = player.hitbox.centerx + 50 - WIDTH / 2
         self.offset.y = player.hitbox.centery + 50 - HEIGHT / 2
 
-        visible_chunks = self.get_visible_chunks()
-
         # Render chunked tiles
-        rendered = 0
+        self.rendered_tiles = 0
         for layer in LAYERS:
-            for chunk_key in visible_chunks:
+            for chunk_key in self.rendered_chunks:
                 for tile in self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []):
                     offset_rect = tile.rect.copy()
                     offset_rect.topleft -= self.offset
                     self.win.blit(tile.image, offset_rect)
 
-                rendered += 1
-
-        print(f"Tiles rendered this frame: {rendered}")
+                    self.rendered_tiles += 1
 
         # Render dynamic sprites
         for layer in LAYERS:
@@ -46,3 +48,13 @@ class Camera(pg.sprite.Group):
                     offset_rect = sprite.rect.copy()
                     offset_rect.center -= self.offset
                     self.win.blit(sprite.image, offset_rect)
+
+    def update(self, *args, **kwargs):
+        self.get_rendered_chunks()
+
+        super().update(*args, **kwargs)
+
+        for layer in LAYERS:
+            for chunk_key in self.rendered_chunks:
+                for tile in self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []):
+                    tile.update(*args, **kwargs)

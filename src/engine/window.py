@@ -1,3 +1,4 @@
+from src.engine.debug import Debug
 from src.engine.settings import *
 from src.engine.scene import Scene
 
@@ -9,25 +10,35 @@ class Window:
         pg.display.set_caption(TITLE)
 
         self.clock = pg.time.Clock()
+        self.dt = 0
 
         self.scene = Scene()
-
+        self.debug = Debug(self)
         self.running = True
 
     def event_handler(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_F1:
+                    self.debug.show = not self.debug.show
 
             self.scene.event_handler(event)
 
     def render(self):
-        self.win.fill((10,40,80))
+        self.win.fill((10, 40, 80))
         self.scene.render()
+
+        if self.debug and self.debug.show:
+            self.debug.render()
+
         pg.display.flip()
 
     def update(self):
         dt = self.clock.tick(120) / 1000
+        self.dt = dt
+
         pg.display.set_caption(f"{TITLE} | FPS: [{self.clock.get_fps() :.0f}] | DT: [{dt}]")
 
         self.scene.update(dt)

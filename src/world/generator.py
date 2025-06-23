@@ -2,6 +2,7 @@ from src.engine.camera import Camera
 from src.engine.settings import *
 from src.engine.utils import load_tile_map
 from src.entities.player import Player
+from src.tiles.animated_tile import AnimatedTile
 from src.tiles.tiles import Tile
 from pytmx.util_pygame import load_pygame
 
@@ -77,7 +78,7 @@ class Generator:
 
     def load_all(self):
         self.load_layer("plantable","floor")
-        self.load_layer("water")
+        self.load_layer("water",animated_frames=load_tile_map("assets/images/Tilesets/ground tiles/water frames/Water.png",16,16,scale=(TILE_SIZE,TILE_SIZE)))
         self.load_layer("world-end")
         self.load_objects("entities","player")
 
@@ -103,7 +104,7 @@ class Generator:
                 z_value = name if z is None else z
 
                 if animated_frames:
-                    pass
+                    tile = AnimatedTile((world_x, world_y), animated_frames, [], z_value)
                 else:
                     tile = Tile((world_x, world_y), img, [], z_value)
 
