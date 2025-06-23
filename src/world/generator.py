@@ -18,6 +18,7 @@ class Generator:
 
         self.visible_sprites = Camera(self)
         self.collide_rects = {}
+        self.plantable_rects = {}
 
 
         self.assets = self.load_assets()
@@ -98,10 +99,14 @@ class Generator:
             world_y = y * TILE_SIZE
             img = pg.transform.scale(img, (TILE_SIZE, TILE_SIZE))
 
+            if name == "plantable":
+                self.plantable_rects[f"{world_x};{world_y}"] = pg.Rect(world_x, world_y, TILE_SIZE, TILE_SIZE)
+
             if name in COLLIDE_LAYERS:
                 self.collide_rects[f"{world_x};{world_y}"] = pg.Rect(world_x, world_y, TILE_SIZE, TILE_SIZE)
             else:
                 z_value = name if z is None else z
+
 
                 if animated_frames:
                     tile = AnimatedTile((world_x, world_y), animated_frames, [], z_value)
