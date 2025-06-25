@@ -23,48 +23,87 @@ class Player(Entity):
 
         self.timers["change-tool"] = Timer(500)
 
+        self.joystick = None
+        self.check_joystick()
+
+    def check_joystick(self):
+        # Sanity check to avoid invalid index
+        if pg.joystick.get_count() > 0:
+            js = pg.joystick.Joystick(0)
+            self.joystick = js
+
+    def event_handler(self, event):
+        if event.type == pg.JOYDEVICEADDED:
+            pg.joystick.quit()
+            pg.joystick.init()
+
+            self.check_joystick()
+
+    def get_joystick_pressed(self,number):
+        if not self.joystick:
+            return False
+
+        return self.joystick.get_button(number)
+
+    def get_joystick_axis(self, axis_num, deadzone=0.8):
+        if not self.joystick:
+            return 0
+
+        value = self.joystick.get_axis(axis_num)
+        return value if abs(value) > deadzone else 0
+
     def input(self):
         key = pg.key.get_pressed()
-
         if not self.use_tool:
-            if key[pg.K_SPACE]:
+
+            if key[pg.K_SPACE] or self.get_joystick_pressed(0):
                 self.use_tool = True
                 self.index = 0
 
             if not self.timers["change-tool"].active:
-                if key[pg.K_e]:
+                if key[pg.K_e] or self.get_joystick_pressed(4):
                     self.timers["change-tool"].activate()
                     self.selected_tool += 1
                     if self.selected_tool >= len(self.tools):
                         self.selected_tool = 0
 
-                if key[pg.K_q]:
+                if key[pg.K_q] or self.get_joystick_pressed(5):
                     self.timers["change-tool"].activate()
                     self.selected_tool -= 1
                     if self.selected_tool < 0:
                         self.selected_tool = len(self.tools) -1
 
-
-
             # Movement Horizontal
-            if key[pg.K_d]:
-                self.direction.x = 1
-                self.status = "right"
-            elif key[pg.K_a]:
-                self.direction.x = -1
-                self.status = "left"
-            else:
-                self.direction.x = 0
+            x_input = 0
+            y_input = 0
 
-            # Movement Vertical
+            # Keyboard movement
+            if key[pg.K_d]:
+                x_input += 1
+            elif key[pg.K_a]:
+                x_input -= 1
+
             if key[pg.K_w]:
-                self.direction.y = -1
-                self.status = "up"
+                y_input -= 1
             elif key[pg.K_s]:
-                self.direction.y = 1
+                y_input += 1
+
+            # Joystick input
+            x_input += self.get_joystick_axis(0)  # left stick X
+            y_input += self.get_joystick_axis(1)  # left stick Y
+
+            self.direction.x = x_input
+            self.direction.y = y_input
+
+            # Update facing direction
+            if self.direction.x > 0:
+                self.status = "right"
+            elif self.direction.x < 0:
+                self.status = "left"
+            elif self.direction.y > 0:
                 self.status = "down"
-            else:
-                self.direction.y = 0
+            elif self.direction.y < 0:
+                self.status = "up"
 
     def get_status(self):
         if self.use_tool:

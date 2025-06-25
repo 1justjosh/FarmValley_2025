@@ -21,7 +21,6 @@ class Generator:
         self.plantable_rects = {}
         self.dirt_tiles = {}
 
-
         self.assets = self.load_assets()
 
         self.player = None
@@ -120,7 +119,7 @@ class Generator:
                 self.chunk_tiles[chunk_key][z_value].append(tile)
 
     def event_handler(self, event):
-        pass
+        self.player.event_handler(event)
 
     def update(self, dt):
         self.visible_sprites.update(dt)

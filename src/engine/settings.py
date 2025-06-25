@@ -4,7 +4,7 @@ import os
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
-VERSION_PATCH = 8
+VERSION_PATCH = 9
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 
@@ -28,7 +28,7 @@ COLLIDE_LAYERS = [
     "world-end"
 ]
 
-pg.font.init()
+pg.init()
 
 DEFAULT_FONT = pg.font.Font(pg.font.get_default_font())
 TITLE_FONT = pg.font.Font(pg.font.get_default_font(),30)
