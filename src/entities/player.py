@@ -87,7 +87,7 @@ class Player(Entity):
                 self.generator.dirt_tiles[f"{x};{y}"] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
-                
+
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
 
