@@ -813,7 +813,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="entities">
-  <object id="1" name="Player" x="1681.79" y="940.606">
+  <object id="1" name="Player" x="1593.79" y="856.606">
    <point/>
   </object>
  </objectgroup>

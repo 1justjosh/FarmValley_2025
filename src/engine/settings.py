@@ -19,6 +19,8 @@ WORLD_PATH = os.path.join("assets", "world", "maps")
 LAYERS = [
     "water",
     "floor",
+    "dirt",
+    "plants",
     "entities"
 ]
 

@@ -41,3 +41,15 @@ class Debug:
         self.border.blit(cpu_usage,(0,self.title_rect.bottom + rendered_tiles.get_height() + memory_usage.get_height()))
 
         self.win.blit(self.border,self.border_rect)
+
+        offset_rect = generator.player.hitbox.copy()
+        offset_rect.topleft -= generator.visible_sprites.offset
+
+        pg.draw.rect(self.win,"blue",offset_rect,2)
+
+        pg.draw.circle(self.win,"yellow",vec2(offset_rect.center) + generator.player.action_direction[generator.player.status.split("_")[0]],2)
+
+        for rect in generator.player.collide_objects:
+            offset_rect = rect.copy()
+            offset_rect.topleft -= generator.visible_sprites.offset
+            pg.draw.rect(self.win, "red", offset_rect, 2)

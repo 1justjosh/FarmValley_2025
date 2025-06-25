@@ -5,6 +5,8 @@ class Entity(pg.sprite.Sprite):
         super().__init__(group)
         self.z = "entities"
 
+        self.visible_group = group
+
         self.generator = generator
 
         self.frames = frames

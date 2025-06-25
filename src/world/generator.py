@@ -19,6 +19,7 @@ class Generator:
         self.visible_sprites = Camera(self)
         self.collide_rects = {}
         self.plantable_rects = {}
+        self.dirt_tiles = {}
 
 
         self.assets = self.load_assets()
@@ -31,6 +32,7 @@ class Generator:
     @staticmethod
     def load_assets():
         base_player = load_tile_map(os.path.join(IMAGE_PATH,"Characters","Premium Charakter Spritesheet.png"),48,48,scale=(TILE_SIZE * 2,TILE_SIZE * 2))
+        dirt_tile = load_tile_map(os.path.join(IMAGE_PATH,"Tilesets","ground tiles","Old tiles","Tilled_Dirt_Wide_v2.png"),16,16,scale=(TILE_SIZE,TILE_SIZE))
 
         return {
             "player": {
@@ -75,6 +77,7 @@ class Generator:
                 "right_water": [base_player[176], base_player[177], base_player[178], base_player[179],
                                 base_player[180], base_player[181], base_player[182], base_player[183]],
             },
+            "dirt":dirt_tile,
         }
 
     def load_all(self):

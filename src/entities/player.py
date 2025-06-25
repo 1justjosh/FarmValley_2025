@@ -1,5 +1,7 @@
 from src.engine.settings import *
 from src.entities.entity import Entity
+from src.tiles.tiles import Tile
+
 
 class Player(Entity):
     def __init__(self,pos,frames,group,generator):
@@ -10,6 +12,13 @@ class Player(Entity):
         self.use_tool = False
         self.selected_tool = 0
         self.tools = ["hoe", "water", "axe"]
+
+        self.action_direction = {
+            "right": (TILE_SIZE // 2, 0),
+            "left": (-(TILE_SIZE // 2), 0),
+            "down": (0, TILE_SIZE // 2),
+            "up": (0 , -(TILE_SIZE // 2)),
+        }
 
     def input(self):
         key = pg.key.get_pressed()
@@ -54,8 +63,16 @@ class Player(Entity):
         if self.use_tool:
             self.direction.x = 0
             self.direction.y = 0
+            x = int((self.hitbox.centerx + self.action_direction[self.status.split("_")[0]][0]) // TILE_SIZE) * TILE_SIZE
+            y = int((self.hitbox.centery + self.action_direction[self.status.split("_")[0]][1]) // TILE_SIZE) * TILE_SIZE
 
-            print(int(self.index),len(self.frames[self.status]))
+            if self.selected_tool == 0 and not self.generator.dirt_tiles.get(f"{x};{y}",False):
+                tile = Tile((x, y), self.generator.assets["dirt"][12], self.visible_group, "dirt")
+                self.generator.dirt_tiles[f"{x};{y}"] = tile
+                chunk_key = self.generator.get_chunk_key(x, y)
+                self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
+
+            print(len(self.generator.dirt_tiles))
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
 
