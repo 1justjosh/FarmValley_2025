@@ -14,6 +14,8 @@ class Player(Entity):
         self.selected_tool = 0
         self.tools = ["hoe", "water", "axe"]
 
+        self.show_debug = False
+
         self.action_direction = {
             "right": (TILE_SIZE // 2, 0),
             "left": (-(TILE_SIZE // 2), 0),
@@ -22,6 +24,7 @@ class Player(Entity):
         }
 
         self.timers["change-tool"] = Timer(500)
+        self.timers["show_debug"] = Timer(250)
 
         self.joystick = None
         self.check_joystick()
@@ -54,8 +57,12 @@ class Player(Entity):
 
     def input(self):
         key = pg.key.get_pressed()
-        if not self.use_tool:
+        if self.get_joystick_pressed(9) and self.get_joystick_pressed(8):
+            if not self.timers["show_debug"].active:
+                self.timers["show_debug"].activate()
+                self.show_debug = not self.show_debug
 
+        if not self.use_tool:
             if key[pg.K_SPACE] or self.get_joystick_pressed(0):
                 self.use_tool = True
                 self.index = 0
@@ -121,9 +128,14 @@ class Player(Entity):
             x = int((self.hitbox.centerx + self.action_direction[self.status.split("_")[0]][0]) // TILE_SIZE) * TILE_SIZE
             y = int((self.hitbox.centery + self.action_direction[self.status.split("_")[0]][1]) // TILE_SIZE) * TILE_SIZE
 
-            if self.selected_tool == 0 and not self.generator.dirt_tiles.get(f"{x};{y}",False):
+            pos_key = f"{x};{y}"
+            if (
+                    self.selected_tool == 0
+                    and pos_key not in self.generator.dirt_tiles
+                    and pos_key in self.generator.plantable_rects
+            ):
                 tile = Tile((x, y), self.generator.assets["dirt"][12], self.visible_group, "dirt")
-                self.generator.dirt_tiles[f"{x};{y}"] = tile
+                self.generator.dirt_tiles[pos_key] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
 

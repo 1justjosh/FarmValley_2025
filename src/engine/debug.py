@@ -23,6 +23,13 @@ class Debug:
         cpu = process.cpu_percent()  # CPU usage over 0.1 seconds
         return memory, cpu
 
+    def update(self):
+        generator = self.window.scene.generator
+        if not generator or self.window.scene.loading:
+            return
+
+        self.show = generator.player.show_debug
+
     def render(self):
         generator = self.window.scene.generator
         if not generator or self.window.scene.loading:
