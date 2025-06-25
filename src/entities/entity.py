@@ -5,6 +5,8 @@ class Entity(pg.sprite.Sprite):
         super().__init__(group)
         self.z = "entities"
 
+        self.timers = {}
+
         self.visible_group = group
 
         self.generator = generator
@@ -100,3 +102,7 @@ class Entity(pg.sprite.Sprite):
 
         self.rect.center = self.hitbox.center
         self.old_rect = self.hitbox.copy()
+
+    def update(self,dt):
+        for timer in self.timers.values():
+            timer.update()

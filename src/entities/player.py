@@ -1,4 +1,5 @@
 from src.engine.settings import *
+from src.engine.timer import Timer
 from src.entities.entity import Entity
 from src.tiles.tiles import Tile
 
@@ -20,15 +21,30 @@ class Player(Entity):
             "up": (0 , -(TILE_SIZE // 2)),
         }
 
+        self.timers["change-tool"] = Timer(500)
+
     def input(self):
         key = pg.key.get_pressed()
 
-        if key[pg.K_SPACE]:
-            if not self.use_tool:
+        if not self.use_tool:
+            if key[pg.K_SPACE]:
                 self.use_tool = True
                 self.index = 0
 
-        if not self.use_tool:
+            if not self.timers["change-tool"].active:
+                if key[pg.K_e]:
+                    self.timers["change-tool"].activate()
+                    self.selected_tool += 1
+                    if self.selected_tool >= len(self.tools):
+                        self.selected_tool = 0
+
+                if key[pg.K_q]:
+                    self.timers["change-tool"].activate()
+                    self.selected_tool -= 1
+                    if self.selected_tool < 0:
+                        self.selected_tool = len(self.tools) -1
+
+
 
             # Movement Horizontal
             if key[pg.K_d]:
@@ -71,13 +87,13 @@ class Player(Entity):
                 self.generator.dirt_tiles[f"{x};{y}"] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
-
-            print(len(self.generator.dirt_tiles))
+                
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
 
 
     def update(self,dt):
+        super().update(dt)
         self.input()
         self.get_status()
         self.tool_use()
