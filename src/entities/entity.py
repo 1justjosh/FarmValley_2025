@@ -40,6 +40,8 @@ class Entity(pg.sprite.Sprite):
         self.rect.center = self.hitbox.center  # <-- Force rect to follow hitbox
         self.old_rect = self.hitbox.copy()
 
+    def event_handler(self,event): ...
+
     def end(self):
         self.old_rect = self.hitbox.copy()
 

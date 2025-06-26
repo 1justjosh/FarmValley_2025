@@ -2,6 +2,7 @@ from src.engine.settings import *
 from src.engine.timer import Timer
 from src.entities.entity import Entity
 from src.tiles.tiles import Tile
+from src.engine.utils import get_joystick_pressed,get_joystick_axis
 
 
 class Player(Entity):
@@ -27,6 +28,7 @@ class Player(Entity):
         self.timers["show_debug"] = Timer(250)
 
         self.joystick = None
+        self.joystick_active = False
         self.check_joystick()
 
     def check_joystick(self):
@@ -36,45 +38,39 @@ class Player(Entity):
             self.joystick = js
 
     def event_handler(self, event):
+        if event.type == pg.KEYDOWN or event.type == pg.MOUSEMOTION:
+            self.joystick_active = False
+        if event.type == pg.JOYBUTTONDOWN or event.type == pg.JOYHATMOTION:
+            self.joystick_active = True
         if event.type == pg.JOYDEVICEADDED:
             pg.joystick.quit()
             pg.joystick.init()
 
             self.check_joystick()
 
-    def get_joystick_pressed(self,number):
-        if not self.joystick:
-            return False
-
-        return self.joystick.get_button(number)
-
-    def get_joystick_axis(self, axis_num, deadzone=0.8):
-        if not self.joystick:
-            return 0
-
-        value = self.joystick.get_axis(axis_num)
-        return value if abs(value) > deadzone else 0
 
     def input(self):
         key = pg.key.get_pressed()
-        if self.get_joystick_pressed(9) and self.get_joystick_pressed(8):
+        if get_joystick_pressed(self.joystick,9) and get_joystick_pressed(self.joystick,8) or key[pg.K_F1]:
             if not self.timers["show_debug"].active:
                 self.timers["show_debug"].activate()
                 self.show_debug = not self.show_debug
 
         if not self.use_tool:
-            if key[pg.K_SPACE] or self.get_joystick_pressed(0):
+            self.anim_speed = 7
+            if key[pg.K_SPACE] or get_joystick_pressed(self.joystick,0):
+                self.anim_speed = 12
                 self.use_tool = True
                 self.index = 0
 
             if not self.timers["change-tool"].active:
-                if key[pg.K_e] or self.get_joystick_pressed(4):
+                if key[pg.K_e] or get_joystick_pressed(self.joystick,4):
                     self.timers["change-tool"].activate()
                     self.selected_tool += 1
                     if self.selected_tool >= len(self.tools):
                         self.selected_tool = 0
 
-                if key[pg.K_q] or self.get_joystick_pressed(5):
+                if key[pg.K_q] or get_joystick_pressed(self.joystick,5):
                     self.timers["change-tool"].activate()
                     self.selected_tool -= 1
                     if self.selected_tool < 0:
@@ -96,8 +92,8 @@ class Player(Entity):
                 y_input += 1
 
             # Joystick input
-            x_input += self.get_joystick_axis(0)  # left stick X
-            y_input += self.get_joystick_axis(1)  # left stick Y
+            x_input += get_joystick_axis(self.joystick,0)  # left stick X
+            y_input += get_joystick_axis(self.joystick,1)  # left stick Y
 
             self.direction.x = x_input
             self.direction.y = y_input
@@ -145,6 +141,13 @@ class Player(Entity):
 
     def update(self,dt):
         super().update(dt)
+
+        if not get_joystick_axis(self.joystick,0) == 0 or  not get_joystick_axis(self.joystick,1) == 0:
+            self.joystick_active = True
+
+        pg.mouse.set_visible(not self.joystick_active)
+        pg.event.set_grab(self.joystick_active)
+
         self.input()
         self.get_status()
         self.tool_use()

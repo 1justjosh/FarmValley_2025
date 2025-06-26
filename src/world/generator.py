@@ -5,6 +5,7 @@ from src.entities.player import Player
 from src.tiles.animated_tile import AnimatedTile
 from src.tiles.tiles import Tile
 from pytmx.util_pygame import load_pygame
+from src.ui.hud import HUD
 
 from collections import defaultdict
 
@@ -24,6 +25,8 @@ class Generator:
         self.assets = self.load_assets()
 
         self.player = None
+
+        self.hud = HUD(self)
 
         self.map = load_pygame(os.path.join(WORLD_PATH, "overworld", "personal_farm.tmx"))
         self.load_all()
@@ -126,3 +129,4 @@ class Generator:
 
     def render(self):
         self.visible_sprites.render(self.player)
+        self.hud.render()

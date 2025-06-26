@@ -4,7 +4,7 @@ from src.engine.scene import Scene
 
 class Window:
     def __init__(self):
-        flags = None
+        flags = pg.SCALED
 
         self.win = pg.display.set_mode(RES,flags=flags if flags else 0)
         pg.display.set_caption(TITLE)
@@ -20,9 +20,12 @@ class Window:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
+            if event.type == pg.JOYBUTTONDOWN:
+                self.joystick_active = True
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_F1:
-                    self.debug.show = not self.debug.show
+                self.joystick_active = False
+                if event.key == pg.K_F2:
+                    pg.display.toggle_fullscreen()
 
             self.scene.event_handler(event)
 
