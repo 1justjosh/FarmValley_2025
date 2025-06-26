@@ -42,7 +42,7 @@ class Window:
         dt = self.clock.tick(120) / 1000
         self.dt = dt
 
-        self.debug.update()
+        self.debug.update(dt)
 
         pg.display.set_caption(f"{TITLE} | FPS: [{self.clock.get_fps() :.0f}] | DT: [{dt}]")
 

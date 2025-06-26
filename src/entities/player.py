@@ -130,7 +130,7 @@ class Player(Entity):
                     and pos_key not in self.generator.dirt_tiles
                     and pos_key in self.generator.plantable_rects
             ):
-                tile = Tile((x, y), self.generator.assets["dirt"][12], self.visible_group, "dirt")
+                tile = Tile((x, y), self.generator.assets["tiles"]["dirt"][12], self.visible_group, "dirt")
                 self.generator.dirt_tiles[pos_key] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)

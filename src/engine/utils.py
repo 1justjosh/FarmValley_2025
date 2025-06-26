@@ -1,6 +1,6 @@
 from src.engine.settings import *
 
-def load_tile_map(path,tile_width,tile_height,*args,**kwargs):
+def load_tile_map(path,tile_width,tile_height,*args,**kwargs) -> list[pg.Surface]:
     base_image = pg.image.load(path).convert_alpha()
     images = []
 
