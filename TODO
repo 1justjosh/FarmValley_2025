@@ -8,10 +8,16 @@
 - planting plants on dirt tile
 - weather
 - transitions
+- world end hitbox change size
 
 =================================================================
                             PLAYER
 =================================================================
+- inventory
+- chop trees
+- water dirt tiles
+- plant on dirt tiles
+- midbottom player hitbox 
 
 
 =================================================================

@@ -10,7 +10,6 @@ class Scene:
         self.win = pg.display.get_surface()
         self.generator = None
         self.pause_menu = None
-        self.paused = False
         self.loading = True
         self.loading_ui = LoadingScreen()
 
@@ -28,13 +27,13 @@ class Scene:
 
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    self.paused = not self.paused
+                    self.generator.paused = not self.generator.paused
 
     def update(self, dt):
         if self.loading:
             self.loading_ui.update(dt)
         else:
-            if not self.paused:
+            if not self.generator.paused:
                 self.generator.update(dt)
             else:
                 self.pause_menu.update(dt)
@@ -44,5 +43,5 @@ class Scene:
             self.loading_ui.render(self.win)
         else:
             self.generator.render()
-            if self.paused:
+            if self.generator.paused:
                 self.pause_menu.render()

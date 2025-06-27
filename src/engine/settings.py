@@ -1,10 +1,11 @@
 import pygame as pg
 from pygame.math import Vector2 as vec2
 import os
+import math
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 1
-VERSION_PATCH = 9
+VERSION_MINOR = 2
+VERSION_PATCH = 2
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 
@@ -20,9 +21,9 @@ LAYERS = [
     "water",
     "floor",
     "dirt",
-    "plants",
-    "entities"
+    "main"
 ]
+
 
 COLLIDE_LAYERS = [
     "world-end"

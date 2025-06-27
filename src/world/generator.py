@@ -1,3 +1,5 @@
+import random
+
 from src.engine.camera import Camera
 from src.engine.settings import *
 from src.engine.utils import load_tile_map
@@ -5,6 +7,8 @@ from src.entities.player import Player
 from src.tiles.animated_tile import AnimatedTile
 from src.tiles.tiles import Tile
 from pytmx.util_pygame import load_pygame
+
+from src.tiles.tree import Tree
 from src.ui.hud import HUD
 
 from collections import defaultdict
@@ -16,11 +20,13 @@ class Generator:
         self.chunk_size = TILE_SIZE
         self.chunk_tiles = defaultdict(lambda: defaultdict(list))  # {chunk_key: {z: [tiles]}}
 
+        self.paused = False
 
         self.visible_sprites = Camera(self)
         self.collide_rects = {}
         self.plantable_rects = {}
         self.dirt_tiles = {}
+        self.tree_tiles = {}
 
         self.assets = self.load_assets()
 
@@ -35,7 +41,14 @@ class Generator:
     def load_assets():
         base_player = load_tile_map(os.path.join(IMAGE_PATH,"Characters","Premium Charakter Spritesheet.png"),48,48,scale=(TILE_SIZE * 2,TILE_SIZE * 2))
         dirt_tile = load_tile_map(os.path.join(IMAGE_PATH,"Tilesets","ground tiles","Old tiles","Tilled_Dirt_Wide_v2.png"),16,16,scale=(TILE_SIZE,TILE_SIZE))
-        emote_tile = load_tile_map(os.path.join(IMAGE_PATH,"UI Sprites/Dialouge UI/Emotes/Teemo premium emote animations sprite sheet-export.png"),32,32,scale=(76,76))
+        emote_tile = load_tile_map(os.path.join(IMAGE_PATH,"UI Sprites","Dialouge UI","Emotes","Teemo premium emote animations sprite sheet-export.png"),32,32,scale=(76,76))
+        tree_tiles = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Trees, stumps and bushes.png"),16,16,scale=(TILE_SIZE,TILE_SIZE))
+        fruit_tiles = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Items","fruit-n-berries-items.png"),16,16,scale=(TILE_SIZE//3,TILE_SIZE//3))
+        big_tree = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Tree animations","tree_sprites.png"),48,48,scale=(TILE_SIZE*2,TILE_SIZE*2))
+        small_tree = pg.Surface((TILE_SIZE,TILE_SIZE*2),flags=pg.SRCALPHA)
+        small_tree.blit(tree_tiles[0],(0,0))
+        small_tree.blit(tree_tiles[12],(0,TILE_SIZE))
+
         return {
             "player": {
                 "down_idle": base_player[0:7],
@@ -64,7 +77,18 @@ class Generator:
 
             },
             "tiles": {
-                    "dirt":dirt_tile,
+                "dirt": dirt_tile,
+                "trees": {
+                    "fruit": {
+                        "apple": fruit_tiles[0]
+                    },
+                    "small": small_tree,
+                    "big":{
+                        "idle": [big_tree[0]],
+                        "pop-up": big_tree[12:15],
+                        "shake": big_tree[24:29]
+                    }
+                }
             },
             "HUD":{
                 "frames": load_tile_map("assets/images/emojis/emoji style ui/Inventory_Blocks_Spritesheet.png",48,48,scale=(128,128)),
@@ -81,9 +105,61 @@ class Generator:
 
     def load_all(self):
         self.load_layer("plantable","floor")
+        self.load_trees()
         self.load_layer("water",animated_frames=load_tile_map("assets/images/Tilesets/ground tiles/water frames/Water.png",16,16,scale=(TILE_SIZE,TILE_SIZE)))
         self.load_layer("world-end")
         self.load_objects("entities","player")
+
+    def load_trees(self):
+        for layer in self.map.layers:
+            if not hasattr(layer, "tiles"):
+                continue
+            if not layer.name.endswith("_trees"):
+                continue
+
+            chance = layer.properties.get("chance", 1)
+            tree_type = layer.properties.get("type", "apple")
+
+            for x, y, img in layer.tiles():
+                if random.randint(0, chance) != 0:
+                    continue
+
+                world_x = x * TILE_SIZE
+                world_y = y * TILE_SIZE
+                pos_key = f"{world_x};{world_y}"
+                right_pos_key = f"{world_x + TILE_SIZE};{world_y}"
+
+                # ✅ Reserve both base tiles to prevent overlap
+                if pos_key in self.plantable_rects and right_pos_key in self.plantable_rects:
+                    # Anchor top-left of 2×2 image
+                    tree = Tree(
+                        (world_x, world_y - TILE_SIZE),  # top-left corner
+                        self.assets["tiles"]["trees"]["big"],
+                        self.visible_sprites,
+                        self,
+                        tree_type,
+                        self.assets["tiles"]["trees"]["fruit"][tree_type]
+                    )
+
+                    chunk_key = self.get_chunk_key(world_x, world_y - TILE_SIZE)
+                    self.chunk_tiles[chunk_key]["plants"].append(tree)
+
+                    trunk_width = TILE_SIZE * 0.5
+                    trunk_height = TILE_SIZE * 0.6
+
+                    trunk_x = world_x + TILE_SIZE - trunk_width / 2
+                    trunk_y = world_y + TILE_SIZE - trunk_height * 0.9  # slightly up from the ground
+
+                    self.collide_rects[pos_key] = pg.Rect(
+                        trunk_x,
+                        trunk_y - TILE_SIZE / 4,
+                        trunk_width,
+                        trunk_height
+                    )
+
+                    # Remove from plantable
+                    del self.plantable_rects[pos_key]
+                    del self.plantable_rects[right_pos_key]
 
     def load_objects(self,layer_name,name):
         for obj in self.map.get_layer_by_name(layer_name):
@@ -127,4 +203,6 @@ class Generator:
 
     def render(self):
         self.visible_sprites.render(self.player)
+        for tile in self.tree_tiles.values():
+            pg.draw.rect(self.win, "red", tile.rect.move(-self.visible_sprites.offset), 1)
         self.hud.render()

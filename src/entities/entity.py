@@ -3,7 +3,7 @@ from src.engine.settings import *
 class Entity(pg.sprite.Sprite):
     def __init__(self,pos,frames,group,generator):
         super().__init__(group)
-        self.z = "entities"
+        self.z = "main"
 
         self.timers = {}
 

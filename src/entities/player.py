@@ -1,3 +1,5 @@
+from psutil import swap_memory
+
 from src.engine.settings import *
 from src.engine.timer import Timer
 from src.entities.entity import Entity
@@ -9,7 +11,7 @@ class Player(Entity):
     def __init__(self,pos,frames,group,generator):
         super().__init__(pos,frames,group,generator)
         self.create()
-        self.hitbox = pg.Rect(self.rect.center, (TILE_SIZE * 0.9, TILE_SIZE * 0.9))
+        self.hitbox = pg.Rect(self.rect.midbottom, (TILE_SIZE * 0.5, TILE_SIZE * 0.5))
 
         self.use_tool = False
         self.selected_tool = 0
@@ -40,6 +42,10 @@ class Player(Entity):
     def event_handler(self, event):
         if event.type == pg.KEYDOWN or event.type == pg.MOUSEMOTION:
             self.joystick_active = False
+
+        if event.type == pg.JOYBUTTONDOWN:
+            if get_joystick_pressed(self.joystick,7):
+                self.generator.paused = not self.generator.paused
         if event.type == pg.JOYBUTTONDOWN or event.type == pg.JOYHATMOTION:
             self.joystick_active = True
         if event.type == pg.JOYDEVICEADDED:
