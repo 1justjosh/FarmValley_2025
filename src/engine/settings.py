@@ -16,6 +16,7 @@ TILE_SIZE = 64
 
 IMAGE_PATH = os.path.join("assets", "images")
 WORLD_PATH = os.path.join("assets", "world", "maps")
+AUDIO_PATH = os.path.join("assets", "audio")
 
 LAYERS = [
     "water",

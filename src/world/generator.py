@@ -1,3 +1,4 @@
+import os.path
 import random
 
 from src.engine.camera import Camera
@@ -81,7 +82,7 @@ class Generator:
                 "trees": {
                     "fruit": {
                         "apple": fruit_tiles[0],
-                        "peach": pg.transform.scale(tree_tiles[30],(TILE_SIZE//3,TILE_SIZE//3))
+                        "peach": pg.transform.scale(tree_tiles[30],(TILE_SIZE//2,TILE_SIZE//2))
                     },
                     "small": small_tree,
                     "big":{
@@ -106,6 +107,7 @@ class Generator:
 
     def load_all(self):
         self.load_layer("plantable","floor")
+        self.load_layer("floor")
         self.load_trees()
         self.load_layer("water",animated_frames=load_tile_map("assets/images/Tilesets/ground tiles/water frames/Water.png",16,16,scale=(TILE_SIZE,TILE_SIZE)))
         self.load_layer("world-end")

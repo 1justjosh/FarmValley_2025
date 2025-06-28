@@ -21,7 +21,7 @@ class Camera(pg.sprite.Group):
 
         start_x = int(view_rect.left // self.chunk_size)
         end_x = int(view_rect.right // self.chunk_size) + 1
-        start_y = int(view_rect.top // self.chunk_size)
+        start_y = int(view_rect.top // self.chunk_size) - 1
         end_y = int(view_rect.bottom // self.chunk_size) + 1
 
         return {f"{x};{y}" for x in range(start_x, end_x) for y in range(start_y, end_y)}
@@ -38,10 +38,12 @@ class Camera(pg.sprite.Group):
                 draw_queue.extend(self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []))
 
         # Player and other dynamic sprites (already in the same group)
-        draw_queue.extend(selfd.sprites())
+        draw_queue.extend(self.sprites())
 
         # Sort everything by vertical position
         draw_queue.sort(key=lambda sprite: sprite.hitbox.bottom)
+
+        self.rendered_tiles = len(draw_queue)
 
         # Draw all to screen
         for layer in LAYERS:

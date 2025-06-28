@@ -16,10 +16,17 @@ class Scene:
         self.load_thread = threading.Thread(target=self.load_generator)
         self.load_thread.start()
 
+        self.s = pg.Surface((WIDTH,HEIGHT))
+        self.s.fill((1,7,133))
+        self.s.set_alpha(125)
+
     def load_generator(self):
         self.generator = Generator()
         self.pause_menu = PausedMenu()
         self.loading = False
+
+        pg.mixer.music.load(os.path.join(AUDIO_PATH, "bit-beats-1-168243.mp3"))
+        pg.mixer.music.play(-1)
 
     def event_handler(self, event):
         if not self.loading:

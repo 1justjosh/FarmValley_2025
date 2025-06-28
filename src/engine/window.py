@@ -39,7 +39,7 @@ class Window:
         pg.display.flip()
 
     def update(self):
-        dt = self.clock.tick(120) / 1000
+        dt = self.clock.tick(0) / 1000
         self.dt = dt
 
         self.debug.update(dt)
