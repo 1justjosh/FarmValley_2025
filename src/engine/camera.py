@@ -30,23 +30,25 @@ class Camera(pg.sprite.Group):
         self.offset.x = player.hitbox.centerx + 50 - WIDTH / 2
         self.offset.y = player.hitbox.centery + 50 - HEIGHT / 2
 
-        # Render chunked tiles
-        self.rendered_tiles = 0
+        draw_queue = []
+
+        # Tiles from visible chunks
         for layer in LAYERS:
             for chunk_key in self.rendered_chunks:
-                for tile in self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []):
-                    offset_rect = tile.rect.copy()
-                    offset_rect.topleft -= self.offset
-                    self.win.blit(tile.image, offset_rect)
+                draw_queue.extend(self.generator.chunk_tiles.get(chunk_key, {}).get(layer, []))
 
-                    self.rendered_tiles += 1
+        # Player and other dynamic sprites (already in the same group)
+        draw_queue.extend(selfd.sprites())
 
-        # Render dynamic sprites
+        # Sort everything by vertical position
+        draw_queue.sort(key=lambda sprite: sprite.hitbox.bottom)
+
+        # Draw all to screen
         for layer in LAYERS:
-            for sprite in sorted(self.sprites(), key=lambda s: s.rect.centery):
+            for sprite in draw_queue:
                 if sprite.z == layer:
                     offset_rect = sprite.rect.copy()
-                    offset_rect.center -= self.offset
+                    offset_rect.topleft -= self.offset
                     self.win.blit(sprite.image, offset_rect)
 
     def update(self, *args, **kwargs):

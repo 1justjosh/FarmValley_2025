@@ -80,7 +80,8 @@ class Generator:
                 "dirt": dirt_tile,
                 "trees": {
                     "fruit": {
-                        "apple": fruit_tiles[0]
+                        "apple": fruit_tiles[0],
+                        "peach": pg.transform.scale(tree_tiles[30],(TILE_SIZE//3,TILE_SIZE//3))
                     },
                     "small": small_tree,
                     "big":{
@@ -135,14 +136,15 @@ class Generator:
                     tree = Tree(
                         (world_x, world_y - TILE_SIZE),  # top-left corner
                         self.assets["tiles"]["trees"]["big"],
-                        self.visible_sprites,
+                        [],
                         self,
                         tree_type,
                         self.assets["tiles"]["trees"]["fruit"][tree_type]
                     )
 
                     chunk_key = self.get_chunk_key(world_x, world_y - TILE_SIZE)
-                    self.chunk_tiles[chunk_key]["plants"].append(tree)
+                    self.chunk_tiles[chunk_key]["main"].append(tree)
+
 
                     trunk_width = TILE_SIZE * 0.5
                     trunk_height = TILE_SIZE * 0.6
