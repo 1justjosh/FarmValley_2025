@@ -64,7 +64,7 @@ class Debug:
 
         frame_label = f"Frame Time: {self.frame_time_ms:.2f} ms"
         if self.frame_time_ms > 18:
-            frame_label += " ⚠️ Spike!"
+            frame_label += "Spike!"
 
         frame_time_text = DEFAULT_FONT.render(frame_label, False,
                                               (200, 80, 80) if "Spike" in frame_label else (100, 100, 100))
@@ -98,3 +98,8 @@ class Debug:
             offset_rect = rect.copy()
             offset_rect.topleft -= generator.visible_sprites.offset
             pg.draw.rect(self.win, "red", offset_rect, 2)
+
+        for rect in generator.tree_tiles.values():
+            offset_rect = rect[0].copy()
+            offset_rect.topleft -= generator.visible_sprites.offset
+            pg.draw.rect(self.win, "green", offset_rect, 2)

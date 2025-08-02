@@ -130,6 +130,9 @@ class Player(Entity):
             x = int((self.hitbox.centerx + self.action_direction[self.status.split("_")[0]][0]) // TILE_SIZE) * TILE_SIZE
             y = int((self.hitbox.centery + self.action_direction[self.status.split("_")[0]][1]) // TILE_SIZE) * TILE_SIZE
 
+            action_x = self.hitbox.centerx + self.action_direction[self.status.split("_")[0]][0]
+            action_y = self.hitbox.centery + self.action_direction[self.status.split("_")[0]][1]
+
             pos_key = f"{x};{y}"
             if (
                     self.selected_tool == 0
@@ -140,6 +143,14 @@ class Player(Entity):
                 self.generator.dirt_tiles[pos_key] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
+
+            if self.selected_tool == 2 and pos_key in self.generator.tree_tiles:
+
+                tree = self.generator.tree_tiles[pos_key][1]
+                tree_rect = self.generator.tree_tiles[pos_key][0]
+
+                if tree_rect.collidepoint((action_x,action_y)):
+                    print("Hit tree!")
 
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False

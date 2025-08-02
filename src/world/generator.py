@@ -132,7 +132,7 @@ class Generator:
                 pos_key = f"{world_x};{world_y}"
                 right_pos_key = f"{world_x + TILE_SIZE};{world_y}"
 
-                # ✅ Reserve both base tiles to prevent overlap
+                # Reserve both base tiles to prevent overlap
                 if pos_key in self.plantable_rects and right_pos_key in self.plantable_rects:
                     # Anchor top-left of 2×2 image
                     tree = Tree(
@@ -154,12 +154,17 @@ class Generator:
                     trunk_x = world_x + TILE_SIZE - trunk_width / 2
                     trunk_y = world_y + TILE_SIZE - trunk_height * 0.9  # slightly up from the ground
 
-                    self.collide_rects[pos_key] = pg.Rect(
+                    tree_hitbox = pg.Rect(
                         trunk_x,
                         trunk_y - TILE_SIZE / 4,
                         trunk_width,
                         trunk_height
                     )
+
+                    self.collide_rects[pos_key] = tree_hitbox
+
+                    self.tree_tiles[pos_key] = [tree_hitbox,tree]
+                    self.tree_tiles[right_pos_key] = [tree_hitbox,tree]
 
                     # Remove from plantable
                     del self.plantable_rects[pos_key]
@@ -207,6 +212,4 @@ class Generator:
 
     def render(self):
         self.visible_sprites.render(self.player)
-        for tile in self.tree_tiles.values():
-            pg.draw.rect(self.win, "red", tile.rect.move(-self.visible_sprites.offset), 1)
         self.hud.render()
