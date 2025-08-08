@@ -3,8 +3,10 @@ from psutil import swap_memory
 from src.engine.settings import *
 from src.engine.timer import Timer
 from src.entities.entity import Entity
-from src.tiles.tiles import Tile
+from src.tiles.dirt import Dirt
 from src.engine.utils import get_joystick_pressed,get_joystick_axis
+
+from src.world.file_manager import save_file
 
 
 class Player(Entity):
@@ -142,9 +144,10 @@ class Player(Entity):
                     and pos_key not in self.generator.dirt_tiles
                     and pos_key in self.generator.plantable_rects
             ):
-                tile = Tile((x, y), self.generator.assets["tiles"]["dirt"][12], self.visible_group, "dirt")
+                tile = Dirt((x, y), self.generator.assets["tiles"]["dirt"][12], self.visible_group)
                 self.generator.dirt_tiles[pos_key] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
+                del self.generator.plantable_rects[pos_key]
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
 
             if (
@@ -166,6 +169,7 @@ class Player(Entity):
                 self.use_tool = False
                 self.hit_tree = False
 
+        save_file("assets/engine.json", self.generator)
 
     def update(self,dt):
         super().update(dt)

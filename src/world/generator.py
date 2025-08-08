@@ -1,6 +1,8 @@
 import os.path
 import random
 
+from src.world.file_manager import save_file,load_file
+
 from src.engine.camera import Camera
 from src.engine.settings import *
 from src.engine.utils import load_tile_map
@@ -37,6 +39,8 @@ class Generator:
 
         self.map = load_pygame(os.path.join(WORLD_PATH, "overworld", "personal_farm.tmx"))
         self.load_all()
+
+
 
     @staticmethod
     def load_assets():
@@ -105,6 +109,51 @@ class Generator:
             }
         }
 
+    def load_save_file(self, path):
+        data = load_file(path)
+
+        for tree_type, tree_dict in data.get("trees", {}).items():
+            for pos_str, tree_info in tree_dict.items():
+                world_x, world_y = map(int, pos_str.split(";"))
+                pos_key = f"{world_x};{world_y}"
+                right_pos_key = f"{world_x + TILE_SIZE};{world_y}"
+
+                # Skip if space is already occupied or invalid
+                if pos_key not in self.plantable_rects or right_pos_key not in self.plantable_rects:
+                    continue
+
+                tree = Tree(
+                    (world_x, world_y - TILE_SIZE),
+                    self.assets["tiles"]["trees"]["big"],
+                    [],
+                    self,
+                    tree_type,
+                    self.assets["tiles"]["trees"]["fruit"].get(tree_type, None),
+                    num_fruit=tree_info.get("num-fruit", 0)
+                )
+
+                chunk_key = self.get_chunk_key(world_x, world_y - TILE_SIZE)
+                self.chunk_tiles[chunk_key]["main"].append(tree)
+
+                trunk_width = TILE_SIZE * 0.5
+                trunk_height = TILE_SIZE * 0.6
+                trunk_x = world_x + TILE_SIZE - trunk_width / 2
+                trunk_y = world_y + TILE_SIZE - trunk_height * 0.9
+
+                tree_hitbox = pg.Rect(
+                    trunk_x,
+                    trunk_y - TILE_SIZE / 4,
+                    trunk_width,
+                    trunk_height
+                )
+
+                self.collide_rects[pos_key] = tree_hitbox
+                self.tree_tiles[pos_key] = [tree_hitbox, tree]
+                self.tree_tiles[right_pos_key] = [tree_hitbox, tree]
+
+                del self.plantable_rects[pos_key]
+                del self.plantable_rects[right_pos_key]
+
     def regenerate_chunk(self, chunk_key):
         # 1. Clear chunk data
         if chunk_key in self.chunk_tiles:
@@ -129,8 +178,8 @@ class Generator:
             if not hasattr(layer, "tiles") or not layer.name.endswith("_trees"):
                 continue
 
-            chance = layer.properties.get("chance", 1)
-            tree_type = layer.properties.get("type", "apple")
+            chance = layer.properties.get("chance", 1) # get chance of spawning per tile, if no chance is given then the
+            tree_type = layer.properties.get("type", "apple") # get type, if you cannot find type make it an apple type
 
             for x, y, img in layer.tiles():
                 world_x = x * TILE_SIZE
@@ -182,7 +231,10 @@ class Generator:
     def load_all(self):
         self.load_layer("plantable","floor")
         self.load_layer("floor")
-        self.load_trees()
+        if not os.path.exists("assets/engine.json"):
+            self.load_trees()
+        else:
+            self.load_save_file("assets/engine.json")
         self.load_layer("water",animated_frames=load_tile_map("assets/images/Tilesets/ground tiles/water frames/Water.png",16,16,scale=(TILE_SIZE,TILE_SIZE)))
         self.load_layer("world-end")
         self.load_objects("entities","player")

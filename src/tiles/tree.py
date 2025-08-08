@@ -6,7 +6,7 @@ from src.engine.timer import Timer
 
 
 class Tree(Tile):
-    def __init__(self, pos, img, group, generator, tree_type, fruit_img):
+    def __init__(self, pos, img, group, generator, tree_type, fruit_img, num_fruit=None):
         super().__init__(pos, img["idle"][0], group, "main")
         self.image = img["idle"][0].copy()
 
@@ -18,20 +18,21 @@ class Tree(Tile):
         self.tree_type = tree_type
         self.generator = generator
 
-        self.num_fruit = random.randint(0, 3)
+        self.num_fruit = num_fruit if num_fruit is not None else random.randint(0, 3)
         self.fruit_img = fruit_img
-        self.health = self.num_fruit + 3 # 3 health for tree and added more health per fruit taken away
+        self.health = self.num_fruit + 3
 
         self.placed_position = []
-        self.load_fruit()
+        self.load_fruit()  # ← uses self.num_fruit
 
         self.mask = pg.mask.from_surface(self.image)
         self.tree_mask = self.mask.to_surface()
-        self.tree_mask.set_colorkey((0,0,0))
+        self.tree_mask.set_colorkey((0, 0, 0))
 
         self.flash = False
         self.is_hit = False
         self.timers["tree_flash"] = Timer(100)
+
 
 
     def load_fruit(self):
@@ -72,6 +73,7 @@ class Tree(Tile):
             if self.health > 3: # we have fruit remainder
                 if len(self.placed_position) > 0:
                     self.placed_position.pop(0)
+                    self.num_fruit -= 1
             else: # attack tree
                 self.timers["tree_flash"].activate()
 
