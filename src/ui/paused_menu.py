@@ -19,6 +19,6 @@ class PausedMenu:
     def render(self):
         self.win.blit(self.filter)
 
-        self.border.blit(self.title,vec2(self.border_rect.midtop) + vec2(0,128))
+        self.border.blit(self.title,self.border_rect.midtop - vec2(self.title.get_width() // 2,-128))
 
         self.win.blit(self.border,self.border_rect)

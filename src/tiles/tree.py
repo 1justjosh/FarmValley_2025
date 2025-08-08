@@ -96,6 +96,10 @@ class Tree(Tile):
 
                 del self.generator.tree_tiles[pos_key]
                 del self.generator.tree_tiles[right_pos_key]
+
+                self.generator.plantable_rects[pos_key] = pg.Rect(base_x, base_y + TILE_SIZE, TILE_SIZE, TILE_SIZE)
+                self.generator.plantable_rects[right_pos_key] = pg.Rect(base_x + TILE_SIZE, base_y + TILE_SIZE, TILE_SIZE, TILE_SIZE)
+
                 self.kill()
 
 

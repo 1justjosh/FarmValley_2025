@@ -33,4 +33,4 @@ COLLIDE_LAYERS = [
 pg.init()
 
 DEFAULT_FONT = pg.font.Font("assets/fonts/Minecraft.ttf")
-TITLE_FONT = pg.font.Font("assets/fonts/Minecraft.ttf",40)
+TITLE_FONT = pg.font.Font("assets/fonts/Minecraft.ttf",60)
