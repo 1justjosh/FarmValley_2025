@@ -11,6 +11,13 @@ def save_file(path,generator):
     with open(path,"w") as file:
         data = {}
 
+        # ----------- player ------------------
+        data["player"] = {
+            "pos": generator.player.rect.midtop,
+            "selected-tool": generator.player.selected_tool
+        }
+
+
         # ------------trees--------------------
         if len(generator.tree_tiles) > 0:
             data["trees"] = {}

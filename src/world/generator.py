@@ -112,6 +112,8 @@ class Generator:
     def load_save_file(self, path):
         data = load_file(path)
 
+        self.player = Player(data["player"]["pos"], self.assets["player"], self.visible_sprites,self)
+
         for tree_type, tree_dict in data.get("trees", {}).items():
             for pos_str, tree_info in tree_dict.items():
                 world_x, world_y = map(int, pos_str.split(";"))
@@ -233,11 +235,13 @@ class Generator:
         self.load_layer("floor")
         if not os.path.exists("assets/engine.json"):
             self.load_trees()
+            self.load_objects("entities","player")
         else:
             self.load_save_file("assets/engine.json")
+
         self.load_layer("water",animated_frames=load_tile_map("assets/images/Tilesets/ground tiles/water frames/Water.png",16,16,scale=(TILE_SIZE,TILE_SIZE)))
         self.load_layer("world-end")
-        self.load_objects("entities","player")
+
 
     def load_trees(self):
         for layer in self.map.layers:
@@ -296,10 +300,15 @@ class Generator:
                     del self.plantable_rects[pos_key]
                     del self.plantable_rects[right_pos_key]
 
-    def load_objects(self,layer_name,name):
+    def load_objects(self,layer_name,name,pos=None):
         for obj in self.map.get_layer_by_name(layer_name):
-            x = int(obj.x // self.map.tilewidth) * TILE_SIZE
-            y = int(obj.y // self.map.tileheight) * TILE_SIZE
+            if not pos:
+                x = int(obj.x // self.map.tilewidth) * TILE_SIZE
+                y = int(obj.y // self.map.tileheight) * TILE_SIZE
+            else:
+                x = int(pos[0])
+                y = int(pos[1])
+
             if obj.name == "Player":
                 self.player = Player((x, y), self.assets["player"], self.visible_sprites,self)
 
