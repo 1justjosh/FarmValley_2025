@@ -105,6 +105,80 @@ class Generator:
             }
         }
 
+    def regenerate_chunk(self, chunk_key):
+        # 1. Clear chunk data
+        if chunk_key in self.chunk_tiles:
+            for layer in self.chunk_tiles[chunk_key].values():
+                layer.clear()
+
+        # 2. Recalculate world coordinates from chunk_key
+        chunk_x, chunk_y = map(int, chunk_key.split(";"))
+        world_x = chunk_x * self.chunk_size
+        world_y = chunk_y * self.chunk_size
+
+        # 3. Reload plantable/floor (optional depending on design)
+        # self.load_layer("floor")  # Careful: this loads full layer; might need a localized one
+
+        # 4. Reload trees in that area only
+        self.load_trees_in_area(world_x, world_y)
+
+    def load_trees_in_area(self, chunk_world_x, chunk_world_y):
+        buffer = self.chunk_size
+
+        for layer in self.map.layers:
+            if not hasattr(layer, "tiles") or not layer.name.endswith("_trees"):
+                continue
+
+            chance = layer.properties.get("chance", 1)
+            tree_type = layer.properties.get("type", "apple")
+
+            for x, y, img in layer.tiles():
+                world_x = x * TILE_SIZE
+                world_y = y * TILE_SIZE
+
+                # Check if tree is within the chunk region
+                if not (chunk_world_x <= world_x < chunk_world_x + buffer and
+                        chunk_world_y <= world_y < chunk_world_y + buffer):
+                    continue
+
+                pos_key = f"{world_x};{world_y}"
+                right_pos_key = f"{world_x + TILE_SIZE};{world_y}"
+
+                if random.randint(0, chance) != 0:
+                    continue
+
+                if pos_key in self.plantable_rects and right_pos_key in self.plantable_rects:
+                    tree = Tree(
+                        (world_x, world_y - TILE_SIZE),
+                        self.assets["tiles"]["trees"]["big"],
+                        [],
+                        self,
+                        tree_type,
+                        self.assets["tiles"]["trees"]["fruit"][tree_type]
+                    )
+
+                    chunk_key = self.get_chunk_key(world_x, world_y - TILE_SIZE)
+                    self.chunk_tiles[chunk_key]["main"].append(tree)
+
+                    trunk_width = TILE_SIZE * 0.5
+                    trunk_height = TILE_SIZE * 0.6
+                    trunk_x = world_x + TILE_SIZE - trunk_width / 2
+                    trunk_y = world_y + TILE_SIZE - trunk_height * 0.9
+
+                    tree_hitbox = pg.Rect(
+                        trunk_x,
+                        trunk_y - TILE_SIZE / 4,
+                        trunk_width,
+                        trunk_height
+                    )
+
+                    self.collide_rects[pos_key] = tree_hitbox
+                    self.tree_tiles[pos_key] = [tree_hitbox, tree]
+                    self.tree_tiles[right_pos_key] = [tree_hitbox, tree]
+
+                    del self.plantable_rects[pos_key]
+                    del self.plantable_rects[right_pos_key]
+
     def load_all(self):
         self.load_layer("plantable","floor")
         self.load_layer("floor")

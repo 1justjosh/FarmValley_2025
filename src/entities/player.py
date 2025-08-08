@@ -26,8 +26,10 @@ class Player(Entity):
             "up": (0 , -(TILE_SIZE // 2)),
         }
 
-        self.timers["change-tool"] = Timer(500)
+        self.timers["change_tool"] = Timer(500)
         self.timers["show_debug"] = Timer(250)
+
+        self.hit_tree = False
 
         self.joystick = None
         self.joystick_active = False
@@ -69,15 +71,15 @@ class Player(Entity):
                 self.use_tool = True
                 self.index = 0
 
-            if not self.timers["change-tool"].active:
+            if not self.timers["change_tool"].active:
                 if key[pg.K_e] or get_joystick_pressed(self.joystick,4):
-                    self.timers["change-tool"].activate()
+                    self.timers["change_tool"].activate()
                     self.selected_tool += 1
                     if self.selected_tool >= len(self.tools):
                         self.selected_tool = 0
 
                 if key[pg.K_q] or get_joystick_pressed(self.joystick,5):
-                    self.timers["change-tool"].activate()
+                    self.timers["change_tool"].activate()
                     self.selected_tool -= 1
                     if self.selected_tool < 0:
                         self.selected_tool = len(self.tools) -1
@@ -125,6 +127,7 @@ class Player(Entity):
 
     def tool_use(self):
         if self.use_tool:
+
             self.direction.x = 0
             self.direction.y = 0
             x = int((self.hitbox.centerx + self.action_direction[self.status.split("_")[0]][0]) // TILE_SIZE) * TILE_SIZE
@@ -144,16 +147,24 @@ class Player(Entity):
                 chunk_key = self.generator.get_chunk_key(x, y)
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
 
-            if self.selected_tool == 2 and pos_key in self.generator.tree_tiles:
+            if (
+                    self.selected_tool == 2
+                    and pos_key in self.generator.tree_tiles
+                    and int(self.index) == 4
+                    and not self.hit_tree
+            ):
 
                 tree = self.generator.tree_tiles[pos_key][1]
                 tree_rect = self.generator.tree_tiles[pos_key][0]
 
-                if tree_rect.collidepoint((action_x,action_y)):
-                    print("Hit tree!")
+                if tree_rect.collidepoint((action_x, action_y)):
+                    if not self.hit_tree:
+                        self.hit_tree = True
+                        tree.hit()
 
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
+                self.hit_tree = False
 
 
     def update(self,dt):

@@ -98,8 +98,3 @@ class Debug:
             offset_rect = rect.copy()
             offset_rect.topleft -= generator.visible_sprites.offset
             pg.draw.rect(self.win, "red", offset_rect, 2)
-
-        for rect in generator.tree_tiles.values():
-            offset_rect = rect[0].copy()
-            offset_rect.topleft -= generator.visible_sprites.offset
-            pg.draw.rect(self.win, "green", offset_rect, 2)
