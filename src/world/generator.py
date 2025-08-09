@@ -163,6 +163,7 @@ class Generator:
 
                     self.collide_rects[pos_key] = tree_hitbox
 
+                    # check the two bottom tiles for hitting the tree, optimise because storing duplicate data
                     self.tree_tiles[pos_key] = [tree_hitbox,tree]
                     self.tree_tiles[right_pos_key] = [tree_hitbox,tree]
 
