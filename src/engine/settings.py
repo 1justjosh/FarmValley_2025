@@ -5,7 +5,7 @@ import math
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 2
-VERSION_PATCH = 2
+VERSION_PATCH = 6
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 
@@ -33,4 +33,4 @@ COLLIDE_LAYERS = [
 pg.init()
 
 DEFAULT_FONT = pg.font.Font("assets/fonts/Minecraft.ttf")
-TITLE_FONT = pg.font.Font("assets/fonts/Minecraft.ttf",40)
+TITLE_FONT = pg.font.Font("assets/fonts/Minecraft.ttf",60)

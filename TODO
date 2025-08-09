@@ -1,25 +1,19 @@
 =================================================================
                            GAMEPLAY
 =================================================================
-- saving/loading
-- chopping / planting trees
+- save and load player
+- planting trees
 - harvesting trees
 - watering dirt tiles
 - planting plants on dirt tile
 - weather
 - transitions
 - world end hitbox change size
-- fix placing dirt tiles in floor layer
 
 =================================================================
                             PLAYER
 =================================================================
 - inventory
-- chop trees
-- water dirt tiles
-- plant on dirt tiles
-- midbottom player hitbox 
-
 
 =================================================================
                            ANIMALS

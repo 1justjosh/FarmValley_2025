@@ -15,6 +15,7 @@ class Entity(pg.sprite.Sprite):
         self.status = "down_idle"
         self.index = 0
         self.anim_speed = 7
+        self.end_frame = False
 
         self.start_pos = pos
         self.direction = pg.math.Vector2()
@@ -84,9 +85,11 @@ class Entity(pg.sprite.Sprite):
 
     def animate(self, dt):
         self.index += self.anim_speed * dt
+        if int(self.index) == 0:
+            self.end_frame = False
         if self.index >= len(self.frames[self.status]):
             self.index = 0
-
+            self.end_frame = True
         self.image = self.frames[self.status][int(self.index)]
         self.rect = self.image.get_rect(center=self.hitbox.center)
 
