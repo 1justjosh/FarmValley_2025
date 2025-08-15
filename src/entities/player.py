@@ -169,7 +169,8 @@ class Player(Entity):
                     if not self.hit_tree:
                         self.hit_tree = True
                         resource = tree.hit()
-                        self.inventory[resource] += 1
+                        if resource:
+                            self.inventory[resource] = self.inventory.get(resource, 0) + 1
 
                         print(f"Collected: {resource}")
                         print("Inventory:", self.inventory)

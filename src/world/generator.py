@@ -113,6 +113,7 @@ class Generator:
         data = load_file(path)
 
         self.player = Player(data["player"]["pos"], self.assets["player"], self.visible_sprites,self)
+        self.player.inventory = data["player"]["inventory"]
 
         for tree_type, tree_dict in data.get("trees", {}).items():
             for pos_str, tree_info in tree_dict.items():

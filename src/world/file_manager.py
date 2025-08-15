@@ -14,7 +14,8 @@ def save_file(path,generator):
         # ----------- player ------------------
         data["player"] = {
             "pos": generator.player.rect.midtop,
-            "selected-tool": generator.player.selected_tool
+            "selected-tool": generator.player.selected_tool,
+            "inventory":generator.player.inventory
         }
 
 
