@@ -1,4 +1,6 @@
-from psutil import swap_memory
+import threading
+
+from collections import defaultdict
 
 from src.engine.settings import *
 from src.engine.timer import Timer
@@ -18,6 +20,8 @@ class Player(Entity):
         self.use_tool = False
         self.selected_tool = 0
         self.tools = ["hoe", "water", "axe"]
+
+        self.inventory = defaultdict(int)
 
         self.show_debug = False
 
@@ -160,16 +164,24 @@ class Player(Entity):
                 tree = self.generator.tree_tiles[pos_key][1]
                 tree_rect = self.generator.tree_tiles[pos_key][0]
 
+
                 if tree_rect.collidepoint((action_x, action_y)):
                     if not self.hit_tree:
                         self.hit_tree = True
-                        tree.hit()
+                        resource = tree.hit()
+                        self.inventory[resource] += 1
+
+                        print(f"Collected: {resource}")
+                        print("Inventory:", self.inventory)
 
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
                 self.hit_tree = False
 
-        save_file("assets/engine.json", self.generator)
+        save = threading.Thread(target=save_file,args=("assets/engine.json",self.generator))
+        save.start()
+
+
 
     def update(self,dt):
         super().update(dt)

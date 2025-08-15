@@ -69,39 +69,40 @@ class Tree(Tile):
         for pos in self.placed_position:
             self.image.blit(self.fruit_img, pos)
 
-    def hit(self):
-            if self.health > 3: # we have fruit remainder
-                if len(self.placed_position) > 0:
-                    self.placed_position.pop(0)
-                    self.num_fruit -= 1
-            else: # attack tree
-                self.timers["tree_flash"].activate()
+    def hit(self) -> str:
+        self.timers["tree_flash"].activate()  # Always flash
 
-
+        if self.health > 3 and self.num_fruit > 0:
+            self.placed_position.pop(0)
+            self.num_fruit -= 1
             self.health -= 1
+            return self.tree_type
 
-            if self.health <= 0:
-                base_x, base_y = self.rect.topleft
-                pos_key = f"{base_x};{base_y + TILE_SIZE}"  # original pos_key
-                right_pos_key = f"{base_x + TILE_SIZE};{base_y + TILE_SIZE}"
+        self.health -= 1
 
-                chunk_key = self.generator.get_chunk_key(self.rect.x, self.rect.y)
+        if self.health <= 0:
+            base_x, base_y = self.rect.topleft
+            pos_key = f"{base_x};{base_y + TILE_SIZE}"  # original pos_key
+            right_pos_key = f"{base_x + TILE_SIZE};{base_y + TILE_SIZE}"
 
-                if chunk_key in self.generator.chunk_tiles:
-                    layer = self.generator.chunk_tiles[chunk_key].get("main", [])
-                    if self in layer:
-                        layer.remove(self)
+            chunk_key = self.generator.get_chunk_key(self.rect.x, self.rect.y)
 
-                del self.generator.collide_rects[pos_key]
+            if chunk_key in self.generator.chunk_tiles:
+                layer = self.generator.chunk_tiles[chunk_key].get("main", [])
+                if self in layer:
+                    layer.remove(self)
 
-                del self.generator.tree_tiles[pos_key]
-                del self.generator.tree_tiles[right_pos_key]
+            del self.generator.collide_rects[pos_key]
 
-                self.generator.plantable_rects[pos_key] = pg.Rect(base_x, base_y + TILE_SIZE, TILE_SIZE, TILE_SIZE)
-                self.generator.plantable_rects[right_pos_key] = pg.Rect(base_x + TILE_SIZE, base_y + TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            del self.generator.tree_tiles[pos_key]
+            del self.generator.tree_tiles[right_pos_key]
 
-                self.kill()
+            self.generator.plantable_rects[pos_key] = pg.Rect(base_x, base_y + TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            self.generator.plantable_rects[right_pos_key] = pg.Rect(base_x + TILE_SIZE, base_y + TILE_SIZE, TILE_SIZE,
+                                                                    TILE_SIZE)
 
+            self.kill()
+        return "wood"
 
     def update(self, dt):
         super().update(dt)
