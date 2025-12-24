@@ -72,7 +72,7 @@ class Tree(Tile):
     def hit(self) -> str:
         self.timers["tree_flash"].activate()  # Always flash
 
-        if self.health > 3 and self.num_fruit > 0:
+        if self.health > 3 and self.num_fruit > 0 and self.placed_position:
             self.placed_position.pop(0)
             self.num_fruit -= 1
             self.health -= 1

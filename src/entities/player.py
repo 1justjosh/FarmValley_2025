@@ -172,15 +172,9 @@ class Player(Entity):
                         if resource:
                             self.inventory[resource] = self.inventory.get(resource, 0) + 1
 
-                        print(f"Collected: {resource}")
-                        print("Inventory:", self.inventory)
-
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
                 self.hit_tree = False
-
-        save = threading.Thread(target=save_file,args=("assets/engine.json",self.generator))
-        save.start()
 
 
 
