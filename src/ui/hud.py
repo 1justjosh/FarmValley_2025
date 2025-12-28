@@ -1,5 +1,5 @@
 from src.engine.settings import *
-from src.engine.utils import load_tile_map
+from src.ui.inventory_gui import InventoryGUI
 
 
 class HUD:
@@ -10,7 +10,7 @@ class HUD:
         self.assets = assets
 
 
-        self.emote_frame = self.assets["frames"][7]
+        self.emote_frame = self.assets["frames"]["general"][7]
         self.emote_frame_rect = self.emote_frame.get_rect(topleft=(0,0))
 
         self.emote_status = "pop-up"
@@ -20,13 +20,15 @@ class HUD:
         self.emote_image = self.assets["emote"][self.emote_status][self.emote_index]
         self.emote_rect = self.emote_image.get_rect(center=self.emote_frame_rect.center)
 
-        self.tool_selected_frame = self.assets["frames"][0]
+        self.tool_selected_frame = self.assets["frames"]["general"][0]
         self.tool_selected_frame_rect = self.tool_selected_frame.get_rect(topleft=vec2(self.emote_frame_rect.topleft) + vec2(128,0))
 
         tool_selected_icons = self.assets["tools"]
 
         self.tool_selected_icons = [tool_selected_icons[2],tool_selected_icons[0],tool_selected_icons[1]]
         self.tool_selected_icons_rect = self.tool_selected_icons[0].get_rect(center=self.tool_selected_frame_rect.center)
+
+        self.player_inventory_gui = InventoryGUI(self.generator)
 
     def animate_emote(self, dt):
         frames = self.assets["emote"][self.emote_status]
@@ -56,4 +58,6 @@ class HUD:
         self.win.blit(self.emote_image,self.emote_rect)
         self.win.blit(self.tool_selected_frame,self.tool_selected_frame_rect)
         self.win.blit(self.tool_selected_icons[self.generator.player.selected_tool],self.tool_selected_icons_rect)
+
+        self.player_inventory_gui.render()
 

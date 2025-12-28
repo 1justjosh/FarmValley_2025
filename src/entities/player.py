@@ -1,14 +1,10 @@
-import threading
-
 from collections import defaultdict
 
 from src.engine.settings import *
-from src.engine.timer import Timer
+from src.engine.utils.timer import Timer
 from src.entities.entity import Entity
 from src.tiles.dirt import Dirt
-from src.engine.utils import get_joystick_pressed,get_joystick_axis
-
-from src.world.file_manager import save_file
+from src.engine.utils.utils import get_joystick_pressed,get_joystick_axis
 
 
 class Player(Entity):
@@ -143,17 +139,20 @@ class Player(Entity):
             action_y = self.hitbox.centery + self.action_direction[self.status.split("_")[0]][1]
 
             pos_key = f"{x};{y}"
+
+            # tilling dirt
             if (
                     self.selected_tool == 0
                     and pos_key not in self.generator.dirt_tiles
                     and pos_key in self.generator.plantable_rects
             ):
-                tile = Dirt((x, y), self.generator.assets["tiles"]["dirt"][12], self.visible_group)
+                tile = Dirt((x, y),self.generator.assets, self.visible_group)
                 self.generator.dirt_tiles[pos_key] = tile
                 chunk_key = self.generator.get_chunk_key(x, y)
                 del self.generator.plantable_rects[pos_key]
                 self.generator.chunk_tiles[chunk_key]["dirt"].append(tile)
 
+            # chopping trees
             if (
                     self.selected_tool == 2
                     and pos_key in self.generator.tree_tiles
@@ -175,6 +174,13 @@ class Player(Entity):
             if int(self.index) + 1 >= len(self.frames[self.status]):
                 self.use_tool = False
                 self.hit_tree = False
+
+            # watering dirt tiles
+            if (
+                    self.selected_tool == 1
+                    and pos_key in self.generator.dirt_tiles
+            ):
+                self.generator.dirt_tiles[pos_key].set_watered()
 
 
 

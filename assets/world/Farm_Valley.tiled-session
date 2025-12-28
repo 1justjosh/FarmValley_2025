@@ -8,16 +8,34 @@
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "C:/Users/jjboy/Documents/GitHub/FarmValley_2025/assets/tilesets/Chest.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/jjboy/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/jjboy/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass_Hill_Tiles_v2.tsx": {
+            "scaleInDock": 3
+        },
+        "C:/Users/jjboy/Documents/GitHub/FarmValley_2025/assets/tilesets/Water.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/jjboy/Documents/GitHub/FarmValley_2025/assets/tilesets/fruit-n-berries-items.tsx": {
+            "scaleInDock": 1
+        },
         "C:/Users/jjboy/OneDrive/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass.tsx": {
             "scaleInDock": 3,
             "scaleInEditor": 1
         },
         "maps/overworld/personal_farm.tmx": {
-            "scale": 11,
-            "selectedLayer": 1,
+            "expandedGroupLayers": [
+                5
+            ],
+            "scale": 0.75,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 1273.0454545454545,
-                "y": 921.1818181818182
+                "x": 935.9999999999999,
+                "y": 1216
             }
         }
     },
@@ -28,13 +46,12 @@
     "map.tileWidth": 16,
     "map.width": 400,
     "openFiles": [
-        "maps/overworld/personal_farm.tmx",
-        "C:/Users/jjboy/OneDrive/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass.tsx"
+        "maps/overworld/personal_farm.tmx"
     ],
     "project": "Farm_Valley.tiled-project",
     "recentFiles": [
-        "C:/Users/jjboy/OneDrive/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass.tsx",
-        "maps/overworld/personal_farm.tmx"
+        "maps/overworld/personal_farm.tmx",
+        "C:/Users/jjboy/OneDrive/Documents/GitHub/FarmValley_2025/assets/tilesets/Grass.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

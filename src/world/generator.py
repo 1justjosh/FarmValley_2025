@@ -7,7 +7,7 @@ from src.world.file_manager import save_file,load_file
 
 from src.engine.camera import Camera
 from src.engine.settings import *
-from src.engine.utils import load_tile_map
+from src.engine.utils.utils import load_tile_map, set_images_settings
 from src.entities.player import Player
 from src.tiles.animated_tile import AnimatedTile
 from src.tiles.tiles import Tile
@@ -49,14 +49,22 @@ class Generator:
     @staticmethod
     def load_assets():
         base_player = load_tile_map(os.path.join(IMAGE_PATH,"Characters","Premium Charakter Spritesheet.png"),48,48,scale=(TILE_SIZE * 2,TILE_SIZE * 2))
+
         dirt_tile = load_tile_map(os.path.join(IMAGE_PATH,"Tilesets","ground tiles","Old tiles","Tilled_Dirt_Wide_v2.png"),16,16,scale=(TILE_SIZE,TILE_SIZE))
+
         emote_tile = load_tile_map(os.path.join(IMAGE_PATH,"UI Sprites","Dialouge UI","Emotes","Teemo premium emote animations sprite sheet-export.png"),32,32,scale=(76,76))
+
         tree_tiles = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Trees, stumps and bushes.png"),16,16,scale=(TILE_SIZE,TILE_SIZE))
+
         fruit_tiles = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Items","fruit-n-berries-items.png"),16,16,scale=(TILE_SIZE//3,TILE_SIZE//3))
+
         big_tree = load_tile_map(os.path.join(IMAGE_PATH,"Objects","Tree animations","tree_sprites.png"),48,48,scale=(TILE_SIZE*2,TILE_SIZE*2))
+
         small_tree = pg.Surface((TILE_SIZE,TILE_SIZE*2),flags=pg.SRCALPHA)
         small_tree.blit(tree_tiles[0],(0,0))
         small_tree.blit(tree_tiles[12],(0,TILE_SIZE))
+
+        water_objects = load_tile_map("assets/images/Objects/Water Objects.png", 16,16, scale=(TILE_SIZE, TILE_SIZE))
 
         return {
             "player": {
@@ -87,6 +95,9 @@ class Generator:
             },
             "tiles": {
                 "dirt": dirt_tile,
+                "water-objects":{
+                    "water_puddles":set_images_settings(water_objects[13:18], set_alpha=100)
+                },
                 "trees": {
                     "fruit": {
                         "apple": fruit_tiles[0],
@@ -101,7 +112,12 @@ class Generator:
                 }
             },
             "HUD":{
-                "frames": load_tile_map("assets/images/emojis/emoji style ui/Inventory_Blocks_Spritesheet.png",48,48,scale=(128,128)),
+                "frames": {
+                    "general": load_tile_map("assets/images/emojis/emoji style ui/Inventory_Blocks_Spritesheet.png",48,48,scale=(128,128)),
+                    "inventory": {
+                        "frame": load_tile_map("assets/images/UI Sprites/buttons/square/Square Buttons 26x19.png",26, 19, scale=(64,64))
+                    }
+                },
                 "tools": load_tile_map("assets/images/Objects/Items/tools-n-meterial-items.png",16,16,scale=(64,64)),
                 "emote": {
                     "pop-up": emote_tile[:12],
@@ -109,7 +125,7 @@ class Generator:
                     "idle": [emote_tile[26]],
                     "tongue-out": emote_tile[39:40],
                     "floppy-ears": emote_tile[52:56]
-                }
+                },
             }
         }
 
@@ -178,7 +194,7 @@ class Generator:
                     # Create the dirt tile
                     tile = Dirt(
                         (world_x, world_y),
-                        self.assets["tiles"]["dirt"][12],
+                        self.assets,
                         self.visible_sprites
                     )
 

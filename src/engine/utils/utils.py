@@ -13,6 +13,13 @@ def load_tile_map(path,tile_width,tile_height,*args,**kwargs) -> list[pg.Surface
 
     return images
 
+def set_images_settings(images:list[pg.Surface], **kwargs):
+    for image in images:
+        if "set_alpha" in kwargs:
+            image.set_alpha(kwargs["set_alpha"])
+
+    return images
+
 def get_joystick_pressed(joystick,number):
     if not joystick:
         return False

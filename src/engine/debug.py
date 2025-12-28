@@ -25,9 +25,7 @@ class Debug:
         self.show = False
 
     def get_resource_usage(self):
-        process = ps.Process(os.getpid())
-        memory = process.memory_info().rss / 1024 / 1024  # Memory in MB
-        return memory
+        return ps.virtual_memory().percent
 
 
     def update(self,dt):

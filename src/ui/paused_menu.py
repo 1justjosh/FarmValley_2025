@@ -1,5 +1,5 @@
 from src.engine.settings import *
-from src.engine.utils import load_tile_map
+from src.engine.utils.utils import load_tile_map
 
 class PausedMenu:
     def __init__(self):

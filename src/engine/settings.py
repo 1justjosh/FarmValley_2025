@@ -34,5 +34,7 @@ pg.init()
 
 SAVE_TIMER = 3 # seconds for auto save
 
+MINUTE_COUNT = 60
+
 DEFAULT_FONT = pg.font.Font("assets/fonts/Minecraft.ttf")
 TITLE_FONT = pg.font.Font("assets/fonts/Minecraft.ttf",60)

@@ -1,5 +1,5 @@
 from src.engine.settings import *
-from src.engine.timer import Timer
+from src.engine.utils.timer import Timer
 
 class Tile(pg.sprite.Sprite):
     def __init__(self,pos,img,group,z):

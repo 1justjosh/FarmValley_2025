@@ -2,7 +2,7 @@ import random
 
 from src.engine.settings import *
 from src.tiles.tiles import Tile
-from src.engine.timer import Timer
+from src.engine.utils.timer import Timer
 
 
 class Tree(Tile):
