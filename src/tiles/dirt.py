@@ -21,7 +21,7 @@ class Dirt(Tile):
     def set_watered(self):
         if not self.watered:
             self.watered = True
-            self.image.blit(random.choice(self.assets["tiles"]["water-objects"]["water_puddles"]))
+            self.image.blit(random.choice(self.assets["tiles"]["water-objects"]["water_puddles"]),special_flags=pg.BLEND_RGB_SUB)
 
     def water(self, dt):
         if self.watered:

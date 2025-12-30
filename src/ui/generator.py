@@ -66,8 +66,6 @@ class Generator:
 
         water_objects = load_tile_map("assets/images/Objects/Water Objects.png", 16,16, scale=(TILE_SIZE, TILE_SIZE))
 
-        inventory_ui_frame = load_tile_map("assets/images/emojis/emoji style ui/Inventory_Blocks_Spritesheet.png", 48, 48)
-
         return {
             "player": {
                 "down_idle": base_player[0:7],
@@ -117,7 +115,7 @@ class Generator:
                 "frames": {
                     "general": load_tile_map("assets/images/emojis/emoji style ui/Inventory_Blocks_Spritesheet.png",48,48,scale=(128,128)),
                     "inventory": {
-                        "frame": inventory_ui_frame[8]
+                        "frame": load_tile_map("assets/images/UI Sprites/buttons/square/Square Buttons 26x19.png",26, 19, scale=(64,64))
                     }
                 },
                 "tools": load_tile_map("assets/images/Objects/Items/tools-n-meterial-items.png",16,16,scale=(64,64)),

@@ -10,8 +10,8 @@ class InventoryGUI:
 
         self.frame = pg.Surface((WIDTH // 2, 64),flags=pg.SRCALPHA)
         self.frame.fill("red")
-        self.frame.blit(pg.transform.scale(self.generator.assets["HUD"]["frames"]["inventory"]["frame"][0],(WIDTH//4,64)))
-        self.frame.blit(pg.transform.scale(self.generator.assets["HUD"]["frames"]["inventory"]["frame"][1],(WIDTH//4,64)), (WIDTH//4,0))
+        self.frame.blit(pg.transform.scale(self.generator.assets["HUD"]["frames"]["inventory"]["frame"],(WIDTH//4,64)))
+        self.frame.blit(pg.transform.scale(self.generator.assets["HUD"]["frames"]["inventory"]["frame"],(WIDTH//4,64)), (WIDTH//4,0))
 
         self.frame_rect = self.frame.get_rect(midbottom=(WIDTH // 2, HEIGHT))
 

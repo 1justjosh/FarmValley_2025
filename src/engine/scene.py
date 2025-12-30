@@ -1,7 +1,7 @@
 import threading
 
 from src.ui.paused_menu import PausedMenu
-from src.world.generator import Generator
+from src.ui.generator import Generator
 from src.engine.settings import *
 from src.ui.loading_scene import LoadingScreen
 
